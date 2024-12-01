@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
-	"sort"
 )
 
 func main() {
@@ -37,21 +37,54 @@ func main() {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
-	
-	res := 0
-	
+
+	diff := 0
+
 	sort.Ints(firstList)
 	sort.Ints(secondList)
-	
-	for i := range(firstList) {
+
+	for i := range firstList {
 		a := firstList[i]
 		b := secondList[i]
-		if (a > b) {
-			res += a - b
+		if a > b {
+			diff += a - b
 		} else {
-			res += b - a
+			diff += b - a
 		}
 	}
 
-	fmt.Println(res)
+	// part2
+
+	pos1 := 0
+	pos2 := 0
+	simmilarity := 0
+
+	for pos1 < len(firstList) && pos2 < len(secondList) {
+		num := firstList[pos1]
+
+		count1 := 0
+		count2 := 0
+
+		for pos1 < len(firstList) && num == firstList[pos1] {
+			count1++
+			pos1++
+		}
+
+		for pos2 < len(secondList) && num > secondList[pos2] {
+			pos2++
+		}
+		for pos2 < len(secondList) && num == secondList[pos2] {
+			count2++
+			pos2++
+		}
+
+		if count2 > 0 {
+			fmt.Println(num, count1, count2)
+		}
+
+		simmilarity += num * count1 * count2
+	}
+
+	fmt.Println(diff)
+	fmt.Println(simmilarity)
 }
