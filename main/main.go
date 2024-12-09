@@ -13,6 +13,8 @@ func main() {
 		secondDay()
 	case "3":
 		thirdDay()
+	case "4":
+		fourthDay()
 	default:
 		fmt.Println("Invalid day")
 	}
