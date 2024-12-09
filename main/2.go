@@ -124,17 +124,3 @@ func isSafeP2Skip(report []int, skip int) bool {
 
 	return true
 }
-
-func printReport(report []int, skip, i, step int) {
-	fmt.Print("[")
-	for k, v := range report {
-		if k == skip {
-			fmt.Print("*")
-		}
-		if k == i {
-			fmt.Print("!")
-		}
-		fmt.Print(v, " ")
-	}
-	fmt.Println("]", step)
-}
