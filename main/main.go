@@ -19,6 +19,8 @@ func main() {
 		tenthDay()
 	case "11":
 		eleventhDay()
+	case "11.2":
+		eleventhDayP2()
 	default:
 		fmt.Println("Invalid day")
 	}
