@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-const size = 54
+const size10 = 54
 
 func tenthDay() {
 
@@ -19,11 +19,11 @@ func tenthDay() {
 	}
 
 	scanner := bufio.NewScanner(f)
-	input := make([][]byte, 0, size)
+	input := make([][]byte, 0, size10)
 
 	for scanner.Scan() {
 		input = append(input,
-			append(make([]byte, 0, size), scanner.Bytes()...))
+			append(make([]byte, 0, size10), scanner.Bytes()...))
 	}
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
@@ -46,9 +46,9 @@ func tenthDay() {
 }
 
 func newSeen() [][]bool {
-	seen := make([][]bool, 0, size)
-	for i := 0; i < size; i++ {
-		seen = append(seen, make([]bool, size))
+	seen := make([][]bool, 0, size10)
+	for i := 0; i < size10; i++ {
+		seen = append(seen, make([]bool, size10))
 	}
 	return seen
 }
