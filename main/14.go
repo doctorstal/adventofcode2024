@@ -47,8 +47,11 @@ func fourteenthDay() {
 		log.Fatal(err)
 	}
 
+	seconds := 0
+
 	for _ = range simulateSeconds {
 		simulateRobotMovement(robots, spaceW, spaceH)
+		seconds++
 	}
 
 	fmt.Println("SafetyFactor:", calcSafetyFactor(robots, spaceW, spaceH))
@@ -58,9 +61,10 @@ func fourteenthDay() {
 	reader := bufio.NewReader(os.Stdin)
 	for i := simulateSeconds; i > 0; i++ {
 		simulateRobotMovement(robots, spaceW, spaceH)
+		seconds++
 		if findTreeMaybe(robots, spaceW, spaceH) {
 
-			fmt.Println("Step ", i)
+			fmt.Println("seconds ", seconds)
 			printRobots(robots, spaceW, spaceH)
 
 			if s, _ := reader.ReadString('\n'); s == "end" {
