@@ -15,6 +15,8 @@ func main() {
 		thirdDay()
 	case "4":
 		fourthDay()
+	case "5":
+		fifthDay()
 	case "10":
 		tenthDay()
 	case "11":

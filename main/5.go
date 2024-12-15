@@ -20,7 +20,7 @@ func fifthDay() {
 
 	scanner := bufio.NewScanner(f)
 
-	rules := make([][]int, 0)
+	rules := make(map[int][]int)
 	for scanner.Scan() {
 		if scanner.Text() == "" {
 			break
@@ -30,20 +30,52 @@ func fifthDay() {
 			parsed, _ := strconv.Atoi(v)
 			rule = append(rule, parsed)
 		}
-		rules = append(rules, rule)
+		if _, ok := rules[rule[0]]; !ok {
+			rules[rule[0]] = make([]int, 0)
+		}
+		rules[rule[0]] = append(rules[rule[0]], rule[1])
 	}
 	updates := make([][]int, 0)
 	for scanner.Scan() {
 		update := make([]int, 0)
-		for v := range strings.Split(scanner.Text(), ",") {
-			update = append(update, v)
+		for _, v := range strings.Split(scanner.Text(), ",") {
+			parsed, _ := strconv.Atoi(v)
+			update = append(update, parsed)
 		}
 		updates = append(updates, update)
 	}
 
-	fmt.Println(rules, updates)
-
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Println(rules, updates)
+
+	res := 0
+
+	for _, update := range updates {
+		if validateUpdateOrder(update, rules) {
+			res += update[len(update)/2]
+		}
+	}
+
+	fmt.Printf("res: %v\n", res)
+}
+
+func validateUpdateOrder(update []int, rules map[int][]int) bool {
+	fmt.Println(update)
+	for i, v := range update {
+		for j := i - 1; j >= 0; j-- {
+			if bRule, ok := rules[v]; ok {
+				for _, b := range bRule {
+					if update[j] == b {
+						return false
+					}
+				}
+			}
+		}
+	}
+
+	return true
+
 }
