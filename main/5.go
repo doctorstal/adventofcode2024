@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
 
 func fifthDay() {
-	fmt.Println("Day Five Go, Go, Go!")
+	fmt.Println("Day Five Print Queue Go!")
 	f, err := os.Open("input5.txt")
 	if err != nil {
 		log.Fatal(err)
@@ -49,24 +50,45 @@ func fifthDay() {
 		log.Fatal(err)
 	}
 
-	fmt.Println(rules, updates)
-
 	res := 0
+	corr := 0
 
 	for _, update := range updates {
 		if validateUpdateOrder(update, rules) {
 			res += update[len(update)/2]
+		} else {
+			corrected := correctUpdateOrder(update, rules)
+			corr += corrected[len(corrected)/2]
+
 		}
 	}
 
 	fmt.Printf("res: %v\n", res)
+	fmt.Printf("corr: %v\n", corr)
+}
+
+func correctUpdateOrder(update []int, rules map[int][]int) []int {
+	corrected := append(make([]int, 0, len(update)), update...)
+	sort.Slice(corrected, func(i, j int) bool {
+		// [i] before [j]?
+		if bRule, ok := rules[corrected[j]]; ok {
+			for _, b := range bRule {
+				if corrected[i] == b {
+					return false
+				}
+			}
+		}
+		return true
+	})
+
+	return corrected
 }
 
 func validateUpdateOrder(update []int, rules map[int][]int) bool {
-	fmt.Println(update)
+
 	for i, v := range update {
-		for j := i - 1; j >= 0; j-- {
-			if bRule, ok := rules[v]; ok {
+		if bRule, ok := rules[v]; ok {
+			for j := i - 1; j >= 0; j-- {
 				for _, b := range bRule {
 					if update[j] == b {
 						return false
