@@ -85,19 +85,19 @@ func countTrailheadRaiting(input [][]byte, i, j int) int {
 		return 1
 	}
 
-	score := 0
+	raiting := 0
 	nextAlt := input[i][j] + 1
 	if j+1 < len(input[i]) && input[i][j+1] == nextAlt {
-		score += countTrailheadRaiting(input, i, j+1)
+		raiting += countTrailheadRaiting(input, i, j+1)
 	}
 	if i+1 < len(input) && input[i+1][j] == nextAlt {
-		score += countTrailheadRaiting(input, i+1, j)
+		raiting += countTrailheadRaiting(input, i+1, j)
 	}
 	if j >= 1 && input[i][j-1] == nextAlt {
-		score += countTrailheadRaiting(input, i, j-1)
+		raiting += countTrailheadRaiting(input, i, j-1)
 	}
 	if i >= 1 && input[i-1][j] == nextAlt {
-		score += countTrailheadRaiting(input, i-1, j)
+		raiting += countTrailheadRaiting(input, i-1, j)
 	}
-	return score
+	return raiting
 }
