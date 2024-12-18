@@ -20,7 +20,7 @@ type (
 	}
 )
 
-func readArea(fileName string) (area [][]byte) {
+func readFileAsBytes(fileName string) (area [][]byte) {
 	f, err := os.Open(fileName)
 	if err != nil {
 		log.Fatal(err)

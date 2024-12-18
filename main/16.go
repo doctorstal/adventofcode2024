@@ -13,7 +13,7 @@ type (
 
 func sixteenthDay() {
 	fmt.Println("--- Day 16: Reindeer Maze ---")
-	maze := readArea("input16example.txt") //57349
+	maze := readFileAsBytes("input16example.txt") //57349
 	printArea(maze)
 
 	score, tiles := findMazePathScoreAndBestTiles(maze)
