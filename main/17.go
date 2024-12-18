@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
@@ -9,7 +10,7 @@ import (
 
 type ChronospatialComputer struct {
 	iptr int
-	out  string
+	out  []int
 	regA int
 	regB int
 	regC int
@@ -17,14 +18,20 @@ type ChronospatialComputer struct {
 
 func (c *ChronospatialComputer) runProgram(program []int) (out string) {
 	c.iptr = 0
-	c.out = ""
+	c.out = make([]int, 0)
 	for c.iptr < len(program) {
 		opcode := program[c.iptr]
 		operand := program[c.iptr+1]
 		c.iptr += c.performOperation(opcode, operand)
 	}
 
-	return c.out
+	output := ""
+	for _, v := range c.out {
+		temp := strconv.Itoa(v)
+		output = output + temp + ","
+	}
+
+	return output
 }
 func (c *ChronospatialComputer) getComboOperandValue(operand int) int {
 	switch operand {
@@ -63,7 +70,7 @@ func (c *ChronospatialComputer) performOperation(opcode, operand int) (jump int)
 		c.regB = c.regB ^ c.regC
 		// The out instruction (opcode 5) calculates the value of its combo operand modulo 8, then outputs that value. (If a program outputs multiple values, they are separated by commas.)
 	case 5:
-		c.out += fmt.Sprintf("%d,", c.getComboOperandValue(operand)%8)
+		c.out = append(c.out, c.getComboOperandValue(operand)%8)
 		// The bdv instruction (opcode 6) works exactly like the adv instruction except that the result is stored in the B register. (The numerator is still read from the A register.)
 	case 6:
 		c.regB = c.regA / (1 << c.getComboOperandValue(operand))
@@ -79,8 +86,8 @@ func seventeenthDay() {
 
 	c := &ChronospatialComputer{}
 
-	// input := readFileAsBytes("input17.txt")
-	input := readFileAsBytes("input17example.txt")
+	input := readFileAsBytes("input17.txt")
+	// input := readFileAsBytes("input17example.txt")
 
 	reqPattern := regexp.MustCompile(`: (\d+)`)
 	c.regA, _ = strconv.Atoi(reqPattern.FindStringSubmatch(string(input[0]))[1])
@@ -88,8 +95,9 @@ func seventeenthDay() {
 	c.regC, _ = strconv.Atoi(reqPattern.FindStringSubmatch(string(input[2]))[1])
 
 	programPattern := regexp.MustCompile(`: ([,0-9]+)`)
+	programString := programPattern.FindStringSubmatch(string(input[4]))[1]
 	program := make([]int, 0)
-	for _, s := range strings.Split(programPattern.FindStringSubmatch(string(input[4]))[1], ",") {
+	for _, s := range strings.Split(programString, ",") {
 		n, _ := strconv.Atoi(s)
 		program = append(program, n)
 	}
@@ -98,5 +106,41 @@ func seventeenthDay() {
 
 	fmt.Printf("c.runProgram(program): %v\n", c.runProgram(program))
 	fmt.Printf("c: %v\n", c)
+
+	matchLast := func(a1, a2 []int) bool {
+		for j := 0; j < len(c.out); j++ {
+			if a1[j] != a2[len(a2)-len(a1)+j] {
+				return false
+			}
+		}
+		return true
+	}
+
+	bCount := 0
+
+	for i := 0; i < math.MaxInt; i++ {
+		c.regA, c.regB, c.regC = i, 0, 0
+		c.runProgram(program)
+
+		if matchLast(c.out, program) {
+			fmt.Printf("c.runProgram(program): %d: %v\n", i, c.out)
+			if len(c.out) == len(program) {
+				fmt.Printf("FOUND! %d\n", i)
+				return
+			}
+
+			// Go down the branch
+			i = i<<3 - 1
+			bCount = 0
+
+		} else {
+			bCount++
+		}
+		if bCount > 1024 {
+			// loop back to prev tree branch
+			i = i >> 3
+		}
+		//fmt.Printf("i: %b\n", i)
+	}
 
 }
