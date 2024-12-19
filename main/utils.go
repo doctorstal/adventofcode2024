@@ -38,7 +38,7 @@ func readFileAsBytes(fileName string) (area [][]byte) {
 }
 
 func printArea(area [][]byte) {
-	fmt.Printf("area: %s\n", bytes.Join(area, []byte{'\n'}))
+	fmt.Printf("area:\n%s\n", bytes.Join(area, []byte{'\n'}))
 }
 
 func findOnArea(area [][]byte, target byte) (y, x int) {
