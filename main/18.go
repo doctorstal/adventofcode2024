@@ -75,15 +75,3 @@ func eighteenthDay() {
 
 }
 
-func markSteps(y, x int, space [][]byte, stepsMap [][]int, stepsCount int) {
-	if y < 0 || y >= len(space) || x < 0 || x >= len(space[0]) || space[y][x] == '#' {
-		return
-	}
-	if stepsMap[y][x] == -1 || stepsMap[y][x] > stepsCount {
-		stepsMap[y][x] = stepsCount
-		markSteps(y+1, x, space, stepsMap, stepsCount+1)
-		markSteps(y, x+1, space, stepsMap, stepsCount+1)
-		markSteps(y-1, x, space, stepsMap, stepsCount+1)
-		markSteps(y, x-1, space, stepsMap, stepsCount+1)
-	}
-}
