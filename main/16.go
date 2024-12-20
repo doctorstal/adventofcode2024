@@ -13,13 +13,25 @@ type (
 
 func sixteenthDay() {
 	fmt.Println("--- Day 16: Reindeer Maze ---")
-	maze := readFileAsBytes("input16example.txt") //57349
+	maze := readFileAsBytes("input16.txt")
 	printArea(maze)
 
 	score, tiles := findMazePathScoreAndBestTiles(maze)
 
 	fmt.Println("Min score:", score)
 	fmt.Printf("tiles: %v\n", tiles)
+}
+
+func printFoundPath(path map[string]bool) {
+	maze := readFileAsBytes("input16.txt")
+	for i, row := range maze {
+		for j := range row {
+			if path[fmt.Sprintf("%d:%d", i, j)] {
+				maze[i][j] = ' '
+			}
+		}
+	}
+	printArea(maze)
 }
 
 func findMazePathScoreAndBestTiles(maze [][]byte) (score, tiles int) {
@@ -34,18 +46,9 @@ func findMazePathScoreAndBestTiles(maze [][]byte) (score, tiles int) {
 
 	path := make(map[string]bool)
 
-	marcPathScore(maze, sy, sx-1, 0, 1, scores, 0, path)
+	markPathScore(maze, sy, sx-1, 0, 1, scores, 0, path)
 
 	ey, ex := findOnArea(maze, 'E')
-
-	for i, row := range maze {
-		for j := range row {
-			if path[fmt.Sprintf("%d:%d", i, j)] {
-				maze[i][j] = 'O'
-			}
-		}
-	}
-	printArea(maze)
 
 	score = 0
 	for _, v := range scores[ey][ex] {
@@ -56,37 +59,44 @@ func findMazePathScoreAndBestTiles(maze [][]byte) (score, tiles int) {
 
 	fmt.Printf("pathsFound: %v\n", pathsFound)
 
-	return score, len(path)
+	//printFoundPath(bestTiles)
+
+	return score, len(bestTiles)
 
 }
 
 var pathsFound = 0
+var bestTiles map[string]bool
 
-func marcPathScore(maze [][]byte, y, x, dy, dx int, scores [][]map[string]int, currScore int, path map[string]bool) (found bool) {
+func markPathScore(maze [][]byte, y, x, dy, dx int, scores [][]map[string]int, currScore int, path map[string]bool) {
 	cy, cx := y+dy, x+dx
 	key := fmt.Sprintf("%d:%d", cy, cx)
 	dKey := fmt.Sprintf("%d:%d", dy, dx)
 	tile := maze[cy][cx]
-	// fmt.Println("cx", cx, "cy", cy, "tile", string(tile), "score", scores[cy][cx])
+
+	if path[key] {
+		return
+	}
+
 	switch tile {
 	case '#':
-		return false
+		return
 	case '.', 'S':
 		if scores[cy][cx][dKey] == 0 || scores[cy][cx][dKey] >= currScore {
 			scores[cy][cx][dKey] = currScore
 
-			if marcPathScore(maze, cy, cx, dy, dx, scores, currScore+1, path) {
-				path[key] = true
-			}
+			path[key] = true
+
+			markPathScore(maze, cy, cx, dy, dx, scores, currScore+1, path)
 			// turn right
-			if marcPathScore(maze, cy, cx, dx, -dy, scores, currScore+1001, path) {
-				path[key] = true
-			}
+			markPathScore(maze, cy, cx, dx, -dy, scores, currScore+1001, path)
 			// turn left
-			if marcPathScore(maze, cy, cx, -dx, dy, scores, currScore+1001, path) {
-				path[key] = true
-			}
-			return path[key]
+			markPathScore(maze, cy, cx, -dx, dy, scores, currScore+1001, path)
+
+			delete(path, key)
+
+			//fmt.Printf("len(path): %v : %s\n", len(path), key)
+
 			// do not turn back
 		}
 	case 'E':
@@ -98,19 +108,25 @@ func marcPathScore(maze [][]byte, y, x, dy, dx int, scores [][]map[string]int, c
 		}
 		if score == 0 || score > currScore {
 			scores[cy][cx][dKey] = currScore
+
+			bestTiles = make(map[string]bool)
+
 			for k := range path {
-				delete(path, k)
+				bestTiles[k] = true
 			}
-			path[key] = true
+			bestTiles[key] = true
+
 			pathsFound = 1
-			println("clear, found")
-			return true
+			println("clear, found", len(path))
+			return
 		}
 		if score == currScore {
-			println("found")
+			println("found more", len(path))
+			for k := range path {
+				bestTiles[k] = true
+			}
 			pathsFound++
-			return true
+			return
 		}
 	}
-	return false
 }
