@@ -64,3 +64,10 @@ func markSteps(y, x int, space [][]byte, stepsMap [][]int, stepsCount int) {
 		markSteps(y, x-1, space, stepsMap, stepsCount+1)
 	}
 }
+
+func abs(a int) int {
+	if a < 0 {
+		return -a
+	}
+	return a
+}
