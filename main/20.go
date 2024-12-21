@@ -7,7 +7,6 @@ func twentiethDay() {
 
 	// area := readFileAsBytes("input20example.txt")
 	area := readFileAsBytes("input20.txt")
-	printArea(area)
 
 	sy, sx := findOnArea(area, 'S')
 
@@ -22,12 +21,10 @@ func twentiethDay() {
 	markSteps(sy, sx, area, steps, 0)
 
 	minSkip := 100
-	// skipCount := findShortcutsCount(steps, minSkip, 2, area)
+	skipCount := findShortcutsCount(steps, minSkip, 2, area)
 	skipCount20 := findShortcutsCount(steps, minSkip, 20, area)
 
-	printArea(area)
-
-	// fmt.Printf("findShortcutsCount(steps, %d): %v\n", minSkip, skipCount)
+	fmt.Printf("findShortcutsCount(steps, %d): %v\n", minSkip, skipCount)
 	fmt.Printf("findShortcutsCount20(steps, %d): %v\n", minSkip, skipCount20)
 }
 
@@ -50,12 +47,6 @@ func findShortcutsCount(steps [][]int, minSkip int, skipLength int, area [][]byt
 		#31113#
 		##323##
 		###3###
-
-		i <- -3 to 3
-			j <- -3+abs(i) to 3-abs(i)
-
-		i <- -x to x
-			j <- -x+abs(i) to x-abs(i)
 	*/
 
 	h, w := len(steps), len(steps[0])
@@ -68,10 +59,6 @@ func findShortcutsCount(steps [][]int, minSkip int, skipLength int, area [][]byt
 
 	skipInc := func(sy, sx, ey, ex int, sl int) int {
 		if sv := skipVal(sy, sx, ey, ex); sv >= minSkip+sl {
-			// area[sy][sx] = '1'
-			// area[sy][sx] = '1'
-			// area[ey][ex] = '2'
-			// area[ey][ex] = '2'
 			return 1
 		}
 		return 0
@@ -82,8 +69,6 @@ func findShortcutsCount(steps [][]int, minSkip int, skipLength int, area [][]byt
 	for i := 1; i < len(steps); i++ {
 		for j := 1; j < len(steps[0]); j++ {
 			if steps[i][j] != -1 {
-				// k <- -x to x
-				// 		l <- -x+abs(k) to x-abs(k)
 				for k := -skipLength; k <= skipLength; k++ {
 					for l := -skipLength + abs(k); l <= skipLength-abs(k); l++ {
 						skipsCount += skipInc(i, j, i+k, j+l, abs(k)+abs(l))
