@@ -45,6 +45,8 @@ func main() {
 		twentiethDay()
 	case "21":
 		twentyFirstDay()
+	case "22":
+		twentySecondDay()
 	default:
 		fmt.Println("Invalid day")
 	}
