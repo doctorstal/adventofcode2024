@@ -12,12 +12,21 @@ func twentyFirstDay() {
 
 	sumComplexity := 0
 	for _, code := range codes {
-		sumComplexity += calcComplexity(code)
+		sumComplexity += calcComplexity(string(code), 2)
 	}
 
 	fmt.Printf("sumComplexity: %v\n", sumComplexity)
 
-	
+	// part2
+	sumComplexity25 := 0
+	for _, code := range codes {
+		sumComplexity25 += calcComplexity(string(code), 24)
+	}
+
+	fmt.Printf("sumComplexity25: %v\n", sumComplexity25)
+	// 25: 277554934879758 - too high
+	// 24: 110880490505014 - too low
+
 }
 
 var keyboardNumPad = [][]byte{
@@ -32,19 +41,38 @@ var keyboardDirectional = [][]byte{
 	[]byte("<v>"),
 }
 
-func calcComplexity(code []byte) int {
-	d1input := calcDirectionalInput(code, keyboardNumPad)
-	d2input := calcDirectionalInput(d1input, keyboardDirectional)
-	d3input := calcDirectionalInput(d2input, keyboardDirectional)
+func keyCoordinates(keyboard [][]byte) map[byte]Point {
+	coords := make(map[byte]Point)
+	for i, row := range keyboard {
+		for j, v := range row {
+			coords[v] = Point{
+				y: i,
+				x: j,
+			}
+		}
+	}
+	return coords
+}
 
-	numValue, _ := strconv.ParseInt(string(code[:3]), 10, 32)
+func calcComplexity(code string, robotCount int) int {
+	numPadCoordinates := keyCoordinates(keyboardNumPad)
+	dirPadCoordinates := keyCoordinates(keyboardDirectional)
 
-	fmt.Printf("%s: %s len: %d\n", string(code), string(d3input), len(d3input))
+	input := calcDirectionalInput(map[string]int{code: 1}, numPadCoordinates)
 
-	// validate
-	fmt.Println(string(decode(decode(decode(d3input, keyboardDirectional), keyboardDirectional), keyboardNumPad)))
-	return len(d3input) * int(numValue)
+	for _ = range robotCount {
+		input = calcDirectionalInput(input, dirPadCoordinates)
+	}
 
+	numValue, _ := strconv.ParseInt(code[:3], 10, 32)
+	presses := 0
+	for s, count := range input {
+		presses += count * len(s)
+	}
+
+	fmt.Printf("%s: %v, len: %d\n", code, input, presses)
+
+	return presses * int(numValue)
 }
 
 func decode(code []byte, keyboard [][]byte) []byte {
@@ -70,42 +98,71 @@ func decode(code []byte, keyboard [][]byte) []byte {
 	return res
 }
 
-func calcDirectionalInput(code []byte, keyboard [][]byte) []byte {
+func calcDirectionalInputWithMemo(code map[string]int, keyboard map[byte]Point, memo map[string]map[string]int) map[string]int {
+
+	res := make(map[string]int)
+	for key := range code {
+
+		var codedKey map[string]int
+		if r, ok := memo[key]; ok {
+			codedKey = r
+		} else {
+			codedKey = calcDirectionalInput(map[string]int{key: 1}, keyboard)
+			memo[key] = codedKey
+		}
+		for k, v := range codedKey {
+			res[k] += v
+		}
+	}
+	return res
+}
+
+func calcDirectionalInput(code map[string]int, keyboard map[byte]Point) map[string]int {
 	appendN := func(r []byte, b byte, n int) []byte {
 		for _ = range n {
 			r = append(r, b)
 		}
 		return r
 	}
-	y, x := findOnArea(keyboard, 'A')
 
-	panicY, panicX := findOnArea(keyboard, ' ')
+	p := keyboard['A']
+	y, x := p.y, p.x
 
-	res := make([]byte, 0)
-	for _, ch := range code {
-		ty, tx := findOnArea(keyboard, ch)
+	panikP := keyboard[' ']
+	panicY, panicX := panikP.y, panikP.x
 
-		ml := x - tx
-		mr := tx - x
-		mu := y - ty
-		mb := ty - y
+	res := make(map[string]int)
+	for subcode, count := range code {
 
-		// Avoid panic square
-		if ml > 0 && y == panicY && tx == panicX {
-			res = appendN(res, 'v', mb)
-			res = appendN(res, '^', mu)
-			mb, mu = 0, 0
-		} else if mr > 0 && x == panicX && ty == panicY {
-			res = appendN(res, '>', mr)
-			mr = 0
+		for _, ch := range []byte(subcode) {
+			subRes := make([]byte, 0)
+			tp := keyboard[ch]
+			ty, tx := tp.y, tp.x
+
+			ml := x - tx
+			mr := tx - x
+			mu := y - ty
+			mb := ty - y
+
+			// Avoid panic square
+			if ml > 0 && y == panicY && tx == panicX {
+				subRes = appendN(subRes, 'v', mb)
+				subRes = appendN(subRes, '^', mu)
+				mb, mu = 0, 0
+			} else if mr > 0 && x == panicX && ty == panicY {
+				subRes = appendN(subRes, '>', mr)
+				mr = 0
+			}
+			subRes = appendN(subRes, '<', ml)
+			subRes = appendN(subRes, 'v', mb)
+			subRes = appendN(subRes, '>', mr)
+			subRes = appendN(subRes, '^', mu)
+
+			subRes = append(subRes, 'A')
+			y, x = ty, tx
+			res[string(subRes)] += count
 		}
-		res = appendN(res, '<', ml)
-		res = appendN(res, 'v', mb)
-		res = appendN(res, '>', mr)
-		res = appendN(res, '^', mu)
 
-		res = append(res, 'A')
-		y, x = ty, tx
 	}
 
 	return res
