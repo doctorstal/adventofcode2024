@@ -23,6 +23,8 @@ func main() {
 		seventhDay()
 	case "8":
 		eighthDay()
+	case "9":
+		ninthDay()
 	case "10":
 		tenthDay()
 	case "11":

@@ -4,7 +4,8 @@ import "fmt"
 
 func eighthDay() {
 	fmt.Println("--- Day 8: Resonant Collinearity ---")
-	area := readFileAsBytes("input8example.txt")
+	// area := readFileAsBytes("input8example.txt")
+	area := readFileAsBytes("input8.txt")
 	printArea(area)
 
 	antenas := make(map[byte][]*Point)

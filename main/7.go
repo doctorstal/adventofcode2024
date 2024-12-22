@@ -30,10 +30,8 @@ func isValidEquation(target, sum int, numbers []int) bool {
 
 func seventhDay() {
 	fmt.Println("--- Day 7: Bridge Repair ---")
-	// equations := readEquations("input7.txt")
-	equations := readEquations("input7example.txt")
-
-	fmt.Printf("equations: %s\n", equations)
+	equations := readEquations("input7.txt")
+	// equations := readEquations("input7example.txt")
 
 	validSum := 0
 	for _, eq := range equations {
