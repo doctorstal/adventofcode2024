@@ -22,9 +22,16 @@ func isValidEquation(target, sum int, numbers []int) bool {
 	if len(numbers) == 0 {
 		return target == sum
 	}
+	concat := func(a, b int) int {
+		a *= 10
+		for i := b; i >= 10; i /= 10 {
+			a *= 10
+		}
+		return a + b
+	}
 	head := numbers[0]
 	tail := numbers[1:]
-	return isValidEquation(target, sum+head, tail) || isValidEquation(target, sum*head, tail)
+	return isValidEquation(target, sum+head, tail) || isValidEquation(target, sum*head, tail) || isValidEquation(target, concat(sum, head), tail)
 
 }
 
