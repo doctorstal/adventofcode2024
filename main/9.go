@@ -5,12 +5,87 @@ import "fmt"
 func ninthDay() {
 	fmt.Println("--- Day 9: Disk Fragmenter ---")
 	// input := readFileAsBytes("input9example.txt")[0]
-	input := readFileAsBytes("input9.txt")[0]
+	input := readFileAsBytes("input/input9.txt")[0]
 	filesystem := make([]int, 0)
 	for _, b := range input {
 		filesystem = append(filesystem, int(b-'0'))
 	}
 	fmt.Printf("filesystem: %v\n", filesystem)
+
+	checksum := moveFileBlocks(filesystem)
+	fmt.Printf("res: %v\n", checksum)
+
+	filesystem = make([]int, 0)
+	for _, b := range input {
+		filesystem = append(filesystem, int(b-'0'))
+	}
+
+	checksum = moveWholeFiles(filesystem)
+	fmt.Printf("move whole files: %v\n", checksum)
+
+}
+
+func moveWholeFiles(filesystem []int) (checksum int) {
+	checksum = 0
+
+	filesystemCopy := make([]int, len(filesystem))
+	copy(filesystemCopy, filesystem)
+
+	disk := make([]int, 50)
+
+	j := len(filesystem) - 1 // assuming last element is a file
+	if j%2 != 0 {
+		panic("last element was not a file!")
+	}
+
+	for ; j > 0; j -= 2 {
+		pos := 0
+		for i := 1; i < j; i += 2 {
+			pos += filesystemCopy[i-1] // jump over the file
+			if filesystem[i] >= filesystem[j] {
+				pos += filesystemCopy[i] - filesystem[i]
+				// move file into free space
+				filesystem[i] -= filesystem[j]
+
+				checksum += calcCheckSum(pos, filesystem[j], j/2)
+				writeBlocks(disk, pos, filesystem[j], j/2)
+				//fmt.Printf("disk: %v\n", disk)
+
+				filesystem[j] = 0 // do not count this file in checksum on step 2
+
+				break
+			}
+			pos += filesystemCopy[i] // jump over free space
+		}
+	}
+
+	checksum += calcCheckSum(0, filesystem[0], 0)
+	writeBlocks(disk, 0, filesystem[j], -1)
+	pos := filesystem[0]
+	// step 2: count checksum for files that were not moved
+	for j = 2; j < len(filesystem); j += 2 {
+		pos += filesystemCopy[j-1]
+
+		checksum += calcCheckSum(pos, filesystem[j], j/2)
+		writeBlocks(disk, pos, filesystem[j], j/2)
+		pos += filesystemCopy[j]
+	}
+
+	fmt.Printf("disk: %v\n", disk)
+
+	return checksum
+}
+
+func writeBlocks(disk []int, s, l int, fileId int) {
+	for i := s; i < s+l && i < len(disk); i++ {
+		if disk[i] != 0 {
+			fmt.Println("Warning!", fileId, disk[i])
+		}
+		disk[i] = fileId
+	}
+}
+
+func moveFileBlocks(filesystem []int) (checksum int) {
 
 	res := 0
 	pos := filesystem[0] // jump to end of file with id 0
@@ -47,8 +122,10 @@ func ninthDay() {
 		//disk = writeFile(disk, filesystem[i+1], (i+1)/2)
 	}
 
-	fmt.Printf("res: %v\n", res)
 	//fmt.Printf("disk: %v\n", disk)
+
+	return res
+
 }
 
 func writeFile(disk []int, l, fileId int) []int {
