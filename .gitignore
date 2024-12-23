@@ -7,10 +7,5 @@ conf/.env
 .ipynb_checkpoints
 **/secrets_and_local_config
 **/.idea
-/code/web-app-react-graphql/
-/cillers/
-/code/api-python-graphql/
-.cillers/
 /.idea/
-/code/api-python-rest/.cillers/
-/code/web-app-react-rest/.cillers/
+**/input/*

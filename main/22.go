@@ -22,6 +22,7 @@ func twentySecondDay() {
 	fmt.Printf("pricesSum: %v\n", pricesSum)
 
 	fmt.Printf("findMostBananas(prices): %v\n", findMostBananas(prices))
+	// fmt.Printf("findMostBananas(prices): %v\n", findMostBananas([]int64{123}))
 	//fmt.Printf("findMostBananas(prices): %v\n", findMostBananas([]int64{123}))
 
 }
@@ -77,19 +78,21 @@ func buildSeqPrices(n int64) map[string]int64 {
 	sw := NewSlidingWindow(4)
 
 	res := make(map[string]int64)
-	price := int64(0)
+	price := int64(n % 10)
 	diff := int64(0)
 
-	for i := range 2000 {
+	// for i := range 2000 {
+	for i := range 1999 {
+		n = nextMonkeySecret(n)
 
 		prevPrice := price
 		price = n % 10
 		diff = price - prevPrice
 		sw.Push(diff)
 
-		// fmt.Println(n, ":", price, diff, sw.State())
+		// fmt.Println(n, "\t:", price, diff)
 
-		if i >= 4 {
+		if i > 4 {
 			key := sw.State()
 			// set if absent
 			if _, ok := res[key]; !ok {
@@ -97,7 +100,6 @@ func buildSeqPrices(n int64) map[string]int64 {
 			}
 		}
 
-		n = nextMonkeySecret(n)
 	}
 	return res
 }
