@@ -12,7 +12,7 @@ import (
 func twentySecondDay() {
 	fmt.Println("--- Day 22: Monkey Market ---")
 	// prices := readMonkeyPrices("input22example.txt")
-	prices := readMonkeyPrices("input22.txt")
+	prices := readMonkeyPrices("input/input22.txt")
 
 	var pricesSum int64 = 0
 	for _, n := range prices {

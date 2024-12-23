@@ -21,8 +21,8 @@ type ClawMachine struct {
 func thirteenthDay() {
 	fmt.Println("Thirtinth day go!")
 
-	// f, err := os.Open("input13.txt")
-	f, err := os.Open("input13example.txt")
+	f, err := os.Open("input/input13.txt")
+	// f, err := os.Open("input13example.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -30,38 +30,39 @@ func thirteenthDay() {
 
 	machines := readMachines(f)
 
-	// fmt.Println("Tokens needed: ", calcTokensForAllPrizes(machines))
+	fmt.Println("Tokens needed: ", calcTokensForAllPrizes(machines, 0))
 
 	// Part 2
 
-	fmt.Println("Tokens needed for real: ", calcTokensForAllPrizesP2(machines))
+	fmt.Println("Tokens needed for real: ", calcTokensForAllPrizes(machines, 10000000000000))
 
 	// findDifferenceP1AndP2(machines)
 
 }
 
-// func findDifferenceP1AndP2(machines []*ClawMachine) {
-
-// 	for _, m := range machines {
-// 		rec, _ := calcTokensForPrize(m, 0, 0, 0, 0, make(map[string]int))
-// 		iter := calcTokensForPrizeIter(m)
-// 		if rec != iter {
-// 			fmt.Printf("m: %v\n", *m)
-// 			fmt.Println(rec, iter)
-// 			break
-// 		}
-// 	}
-// }
-
-func calcTokensForAllPrizesP2(machines []*ClawMachine) int64 {
+func calcTokensForAllPrizes(machines []*ClawMachine, d int64) int64 {
 	res := int64(0)
 	for _, m := range machines {
-		m.px += 10000000000000
-		m.py += 10000000000000
+		m.px += d
+		m.py += d
 
-		res += calcTokensForPrizeIter(m)
+		res += calcTokensForPrizeMath(m)
 	}
 	return res
+}
+
+func calcTokensForPrizeMath(m *ClawMachine) int64 {
+	// A = (p_x*b_y - prize_y*b_x) / (a_x*b_y - a_y*b_x)
+	// B = (a_x*p_y - a_y*p_x) / (a_x*b_y - a_y*b_x)
+	d := m.ax*m.by - m.ay*m.bx
+	a := (m.px*m.by - m.py*m.bx) / d
+	b := (m.py*m.ax - m.px*m.ay) / d
+
+	if (a*m.ax+b*m.bx == m.px) && (a*m.ay+b*m.by == m.py) {
+		return 3*a + b
+	} else {
+		return 0
+	}
 }
 
 func calcTokensForPrizeIter(m *ClawMachine) int64 {
