@@ -59,6 +59,24 @@ func eighthDay() {
 	fmt.Printf("len(antinodes): %v\n", len(antinodes))
 	//fmt.Printf("antenas: %s\n", antenas)
 
+	// part2
+
+	resonantAntinodes := make(map[Point]bool)
+
+	for _, points := range antenas {
+
+		for i, p1 := range points {
+			for j := i + 1; j < len(points); j++ {
+				p2 := points[j]
+				addResonantAntinodes(p1, p2, resonantAntinodes, ah, aw)
+				addResonantAntinodes(p2, p1, resonantAntinodes, ah, aw)
+			}
+		}
+
+	}
+
+	fmt.Printf("len(resonantAntinodes): %v\n", len(resonantAntinodes))
+
 }
 
 func addAntinode(p1, p2 *Point, antinodes map[Point]bool, ah, aw int) {
@@ -69,4 +87,21 @@ func addAntinode(p1, p2 *Point, antinodes map[Point]bool, ah, aw int) {
 	if an.x >= 0 && an.x < aw && an.y >= 0 && an.y < ah {
 		antinodes[an] = true
 	}
+}
+
+func addResonantAntinodes(p1, p2 *Point, antinodes map[Point]bool, ah, aw int) {
+	calcAntinode := func(i int) Point {
+		return Point{
+			y: p1.y + i*(p1.y-p2.y),
+			x: p1.x + i*(p1.x-p2.x),
+		}
+	}
+	for i := 0; ; i++ {
+		an := calcAntinode(i)
+		if an.x < 0 || an.x >= aw || an.y < 0 || an.y >= ah {
+			break
+		}
+		antinodes[an] = true
+	}
+
 }
