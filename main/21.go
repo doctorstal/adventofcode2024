@@ -20,13 +20,10 @@ func twentyFirstDay() {
 	// part2
 	sumComplexity25 := 0
 	for _, code := range codes {
-		sumComplexity25 += calcComplexity(string(code), 24)
+		sumComplexity25 += calcComplexity(string(code), 25)
 	}
 
 	fmt.Printf("sumComplexity25: %v\n", sumComplexity25)
-	// 25: 277554934879758 - too high
-	// 24: 110880490505014 - too low
-
 }
 
 var keyboardNumPad = [][]byte{
@@ -98,25 +95,6 @@ func decode(code []byte, keyboard [][]byte) []byte {
 	return res
 }
 
-func calcDirectionalInputWithMemo(code map[string]int, keyboard map[byte]Point, memo map[string]map[string]int) map[string]int {
-
-	res := make(map[string]int)
-	for key := range code {
-
-		var codedKey map[string]int
-		if r, ok := memo[key]; ok {
-			codedKey = r
-		} else {
-			codedKey = calcDirectionalInput(map[string]int{key: 1}, keyboard)
-			memo[key] = codedKey
-		}
-		for k, v := range codedKey {
-			res[k] += v
-		}
-	}
-	return res
-}
-
 func calcDirectionalInput(code map[string]int, keyboard map[byte]Point) map[string]int {
 	appendN := func(r []byte, b byte, n int) []byte {
 		for _ = range n {
@@ -155,8 +133,8 @@ func calcDirectionalInput(code map[string]int, keyboard map[byte]Point) map[stri
 			}
 			subRes = appendN(subRes, '<', ml)
 			subRes = appendN(subRes, 'v', mb)
-			subRes = appendN(subRes, '>', mr)
 			subRes = appendN(subRes, '^', mu)
+			subRes = appendN(subRes, '>', mr)
 
 			subRes = append(subRes, 'A')
 			y, x = ty, tx
