@@ -81,8 +81,7 @@ func buildSeqPrices(n int64) map[string]int64 {
 	price := int64(n % 10)
 	diff := int64(0)
 
-	// for i := range 2000 {
-	for i := range 1999 {
+	for i := range 2000 {
 		n = nextMonkeySecret(n)
 
 		prevPrice := price
@@ -91,15 +90,14 @@ func buildSeqPrices(n int64) map[string]int64 {
 		sw.Push(diff)
 
 		// fmt.Println(n, "\t:", price, diff)
-
-		if i > 4 {
+		if i > 3 {
 			key := sw.State()
+
 			// set if absent
 			if _, ok := res[key]; !ok {
 				res[key] = price
 			}
 		}
-
 	}
 	return res
 }
