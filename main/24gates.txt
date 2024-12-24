@@ -1,0 +1,60 @@
+// Full Adder Schema:
+x XOR y -> s
+cin XOR s -> z!
+cin AND s -> c0
+x AND y -> c1
+c0 OR c1 -> cout!
+
+
+hmt,z18
+
+x18 XOR y18 -> jss
+jss XOR mdg -> hmt
+jss AND mdg -> z18
+x18 AND y18 -> jcr
+hmt OR jcr -> pfb
+
+
+bfq,z27
+
+x27 XOR y27 -> ntr
+gcc XOR ntr -> bfq
+gcc AND ntr -> pph
+x27 AND y27 -> vgg
+pph OR vgg -> z27
+
+x28 XOR y28 -> mkq
+bfq XOR mkq -> z28
+bfq AND mkq -> pms
+x28 AND y28 -> qfw
+pms OR qfw -> mcb
+
+
+hkh,z31
+
+x31 XOR y31 -> fqh
+ctc XOR fqh -> hkh
+ctc AND fqh -> rjt
+x31 AND y31 -> z31
+hkh OR rjt -> qhp
+
+
+
+fjp,bng
+x39 XOR y39 -> fjp
+bng XOR hsf -> z39
+bng AND hsf -> tkf
+x39 AND y39 -> bng
+fjp OR tkf -> vbm
+
+
+
+
+// 00, 01 are valid
+x00 XOR y00 -> z00
+x01 XOR y01 -> sgt
+x01 AND y01 -> hqg
+x00 AND y00 -> rjr
+rjr XOR sgt -> z01
+rjr AND sgt -> cff
+cff OR hqg -> fkm
